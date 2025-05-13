@@ -68,6 +68,7 @@
             }else{
                 visor.textContent = visor.textContent + '0';
             }
+            atual = visor.textContent;
         }
         function fum() {
             console.log('fum');
@@ -77,6 +78,7 @@
             }else{
                 visor.textContent = visor.textContent + '1';
             }
+            atual = visor.textContent;
         }
         function fdois() {
             console.log('fdois');
@@ -97,6 +99,7 @@
             }else{
                 visor.textContent = visor.textContent + '3';
             }
+            atual = visor.textContent;
         }
         function fquatro() {
             console.log('fquatro');
@@ -106,6 +109,7 @@
             }else{
                 visor.textContent = visor.textContent + '4';
             }
+            atual = visor.textContent;
         }
 
         function fcinco() {
@@ -116,6 +120,7 @@
             }else{
                 visor.textContent = visor.textContent + '5';
             }
+            atual = visor.textContent;
         }
 
         function fseis() {
@@ -126,6 +131,7 @@
             }else{
                 visor.textContent = visor.textContent + '6';
             }
+            atual = visor.textContent;
         }
         function fsete() {
             console.log('fsete');
@@ -135,6 +141,7 @@
             }else{
                 visor.textContent = visor.textContent + '7';
             }
+            atual = visor.textContent;
         }
         function foito() {
             console.log('foito');
@@ -144,6 +151,7 @@
             }else{
                 visor.textContent = visor.textContent + '8';
             }
+            atual = visor.textContent;
         }
         function fnove() {
             console.log('fnove');
@@ -153,6 +161,7 @@
             }else{
                 visor.textContent = visor.textContent + '9';
             }
+            atual = visor.textContent;
 
         }
              function fsoma() {
@@ -192,10 +201,10 @@
                         atual= parseInt(op1) + parseInt(atual);
                         break;
                     case '-':
-                        atual= op1 - atual;
+                        atual= parseInt(op1) -parseInt (atual);
                         break;
                     case 'x':
-                        atual= op1 * atual;
+                        atual= parseInt(op1) * parseInt(atual);
                         break;
                 }
                 let visor = document.getElementById('visor');
