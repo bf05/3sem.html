@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Salário Semanal do Vendedor</title>
+    <script>
+        window.onload = inicio;
+
+        function inicio() {
+            let botaoCalcular = document.getElementById('botaoCalcular');
+            if (botaoCalcular) {
+                botaoCalcular.addEventListener('click', calculaSalarioSemanal);
+            } else {
+                console.error("Erro: O elemento com ID 'botaoCalcular' não foi encontrado.");
+            }
+        }
+
+        function calculaSalarioSemanal() {
+            let nomeVendedorInput = document.getElementById('nomeVendedor');
+            let salarioBaseInput = document.getElementById('salarioBase');
+            let vendasDiaInput = document.getElementById('vendasDia');
+            let resultadoDiv = document.getElementById('resultado');
+
+            if (!nomeVendedorInput || !salarioBaseInput || !vendasDiaInput || !resultadoDiv) {
+                if (resultadoDiv) {
+                    resultadoDiv.textContent = "Erro: Campos de entrada ou saída não encontrados. Verifique os IDs HTML.";
+                } else {
+                    console.error("Erro: Div de resultado não encontrada.");
+                }
+                return;
+            }
+
+            let nomeVendedor = nomeVendedorInput.value;
+            let salarioBase = parseFloat(salarioBaseInput.value);
+            let vendasDia = parseFloat(vendasDiaInput.value);
+
+            resultadoDiv.textContent = "";
+
+            if (nomeVendedor.trim() === "") {
+                resultadoDiv.textContent = "Por favor, preencha o nome do vendedor.";
+                return;
+            }
+            if (isNaN(salarioBase) || salarioBase < 0) {
+                resultadoDiv.textContent = "Por favor, digite um salário base válido e não negativo.";
+                return;
+            }
+            if (isNaN(vendasDia) || vendasDia < 0) {
+                resultadoDiv.textContent = "Por favor, digite um valor de vendas diárias válido e não negativo.";
+                return;
+            }
+
+            const comissaoPorVenda = vendasDia * 0.05;
+
+            let salarioAtual = salarioBase;
+            let textoResultado = "";
+
+            // Formatação do cabeçalho
+            textoResultado += `Nome: ${nomeVendedor}\n`;
+            textoResultado += `Salário: ${salarioBase.toFixed(2)}\n`;
+            textoResultado += `Vendas do dia: ${vendasDia.toFixed(2)}\n\n`; // Duas quebras de linha para o espaçamento
+
+            // Loop para os 5 dias
+            for (let dia = 1; dia <= 5; dia++) {
+                salarioAtual += comissaoPorVenda;
+                textoResultado += `Total ${dia} dias: ${salarioAtual.toFixed(2)}\n`; // Quebra de linha após cada dia
+            }
+
+            resultadoDiv.textContent = textoResultado;
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h2>Cálculo de Salário Semanal do Vendedor</h2>
+
+        <label for="nomeVendedor">Nome do Vendedor:</label>
+        <input type="text" id="nomeVendedor" value="Fulano"><br><br>
+
+        <label for="salarioBase">Salário Base:</label>
+        <input type="number" id="salarioBase" value="1300"><br><br>
+
+        <label for="vendasDia">Vendas do Dia:</label>
+        <input type="number" id="vendasDia" value="100"><br><br>
+
+        <input type="button" id="botaoCalcular" value="Calcular Salário Semanal"><br>
+
+        <h3>Projeção Semanal:</h3>
+        <div id="resultado" style="white-space: pre-wrap;">
+        </div>
+    </div>
+</body>
+</html>
