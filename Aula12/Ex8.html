@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON para Objeto JS</title>
+</head>
+<body>
+    <h2>Conversor de JSON para Objeto JS</h2>
+
+    <label for="jsonInput">Cole seu texto JSON aqui:</label><br>
+    <textarea id="jsonInput" rows="10" cols="50" placeholder='Exemplo: {"nome": "João", "idade": 30}'></textarea><br><br>
+
+    <button id="converterBtn">Converter</button>
+
+    <h3>Propriedades do Objeto:</h3>
+    <div id="resultado">
+    </div>
+
+    <script>
+        window.onload = inicio;
+
+        function inicio() {
+            const converterBtn = document.getElementById('converterBtn');
+            if (converterBtn) {
+                converterBtn.addEventListener('click', converterJson);
+            } else {
+                console.error("Erro: Botão 'converterBtn' não encontrado.");
+            }
+        }
+
+        function converterJson() {
+            const jsonInput = document.getElementById('jsonInput');
+            const resultadoDiv = document.getElementById('resultado');
+
+            resultadoDiv.textContent = "";
+
+            if (!jsonInput || !resultadoDiv) {
+                console.error("Erro: Elementos 'jsonInput' ou 'resultado' não encontrados.");
+                return;
+            }
+
+            const jsonTexto = jsonInput.value.trim();
+
+            if (jsonTexto === "") {
+                resultadoDiv.textContent = "Por favor, cole um texto JSON na área acima.";
+                return;
+            }
+
+            const objetoJs = JSON.parse(jsonTexto);
+
+            let textoResultado = "";
+
+            if (typeof objetoJs.nome !== 'undefined') {
+                textoResultado += `Nome: ${objetoJs.nome}\n`;
+            } else {
+                textoResultado += "Nome: Propriedade 'nome' não encontrada ou indefinida.\n";
+            }
+
+            if (typeof objetoJs.idade !== 'undefined') {
+                textoResultado += `Idade: ${objetoJs.idade}\n`;
+            } else {
+                textoResultado += "Idade: Propriedade 'idade' não encontrada ou indefinida.\n";
+            }
+
+            if (textoResultado === "") {
+                textoResultado = "Nenhuma propriedade 'nome' ou 'idade' encontrada no JSON.";
+            }
+
+            resultadoDiv.textContent = textoResultado;
+        }
+    </script>
+</body>
+</html>

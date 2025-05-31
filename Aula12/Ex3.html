@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota</title>
+    <script>
+        function verificarnota(){
+            const notatexto = document.getElementById("nota").value;
+            const nota = parseFloat(notatexto);
+            const resultadoDiv= document.getElementById("resultado");
+
+            if ((nota)){
+                if(nota < 6){
+                    resultadoDiv.textContent = "Reprovado";
+                }else {
+                    resultadoDiv.textContent = "Aprovado";
+                }
+            }else{
+                resultadoDiv.textContent = "Por favor digite um numero valido";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Verificador de aprovação</h1>
+    <label for = "nota" >Digite a nota</label>
+    <input type="text" id= "nota"><br>
+    <button onclick="verificarnota()" >verificar </button> 
+    <div id="resultado"></div>
+   
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotação e Conversão de Dólar</title>
+</head>
+<body>
+    <h2>Cotação e Conversão de Dólar (USD)</h2>
+
+    <button id="btnCotacaoUSD">Mostrar Cotação do Dólar Hoje</button><br><br>
+    <div id="cotacaoDolar">Aguardando cotação...</div>
+
+    <hr>
+
+    <label for="valorReais">Digite um valor em Reais (R$):</label><br>
+    <input type="number" id="valorReais" placeholder="Ex: 500.00" step="0.01"><br><br>
+
+    <button id="btnConverterReais">Quantos Dólares posso comprar?</button><br><br>
+    <div id="resultadoConversao">
+    </div>
+
+    <script>
+        let cotacaoAtualDolar = 0; 
+
+        window.onload = inicio;
+
+        function inicio() {
+            const btnCotacaoUSD = document.getElementById('btnCotacaoUSD');
+            const btnConverterReais = document.getElementById('btnConverterReais');
+
+            if (btnCotacaoUSD) {
+                btnCotacaoUSD.addEventListener('click', obterCotacaoDolar);
+            } else {
+                console.error("Erro: Botão 'btnCotacaoUSD' não encontrado.");
+            }
+
+            if (btnConverterReais) {
+                btnConverterReais.addEventListener('click', converterReaisParaDolar);
+            } else {
+                console.error("Erro: Botão 'btnConverterReais' não encontrado.");
+            }
+
+            obterCotacaoDolar(); 
+        }
+
+        function obterCotacaoDolar() {
+            const cotacaoDiv = document.getElementById('cotacaoDolar');
+            cotacaoDiv.textContent = "Buscando cotação do dólar...";
+
+            let objetoX = new XMLHttpRequest();
+
+            objetoX.open('GET', 'https://economia.awesomeapi.com.br/json/last/USD-BRL', true);
+
+            objetoX.onload = function() {
+                if (objetoX.status == 200) {
+                    let data = JSON.parse(objetoX.responseText);
+                    
+                    cotacaoAtualDolar = parseFloat(data.USDBRL.ask); 
+                    const dataHora = new Date(parseInt(data.USDBRL.timestamp) * 1000).toLocaleString('pt-BR');
+
+                    if (cotacaoAtualDolar > 0) {
+                        cotacaoDiv.textContent = `1 USD = R$ ${cotacaoAtualDolar.toFixed(4)}\n(Atualizado em: ${dataHora})`;
+                    } else {
+                        cotacaoDiv.textContent = "Não foi possível obter uma cotação válida do dólar.";
+                        cotacaoAtualDolar = 0; 
+                    }
+                } else {
+                    console.error("Erro na requisição XMLHttpRequest. Status: " + objetoX.status);
+                    cotacaoDiv.textContent = `Erro ao carregar a cotação: Status ${objetoX.status}. Tente novamente mais tarde.`;
+                    cotacaoAtualDolar = 0; 
+                }
+            };
+
+            objetoX.onerror = function() {
+                console.error("Erro de rede ao tentar obter a cotação do dólar.");
+                cotacaoDiv.textContent = "Erro de rede: Não foi possível conectar ao servidor de cotação.";
+                cotacaoAtualDolar = 0;
+            };
+
+            objetoX.send();
+        }
+
+        function converterReaisParaDolar() {
+            const valorReaisInput = document.getElementById('valorReais');
+            const resultadoConversaoDiv = document.getElementById('resultadoConversao');
+            resultadoConversaoDiv.textContent = "";
+
+            if (!valorReaisInput || !resultadoConversaoDiv) {
+                console.error("Erro: Elementos 'valorReaisInput' ou 'resultadoConversaoDiv' não encontrados.");
+                return;
+            }
+
+            const valorReais = parseFloat(valorReaisInput.value);
+
+            if (isNaN(valorReais) || valorReais <= 0) {
+                resultadoConversaoDiv.textContent = "Por favor, digite um valor válido e positivo em Reais.";
+                return;
+            }
+
+            if (cotacaoAtualDolar === 0) {
+                resultadoConversaoDiv.textContent = "Não foi possível realizar a conversão. Obtenha a cotação do dólar primeiro ou aguarde a atualização.";
+                return;
+            }
+
+            const valorEmDolar = valorReais / cotacaoAtualDolar;
+
+            resultadoConversaoDiv.textContent = `Com R$ ${valorReais.toFixed(2)}, você pode comprar US$ ${valorEmDolar.toFixed(2)}.`;
+        }
+    </script>
+</body>
+</html>
