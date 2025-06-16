@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        window.onload = inicio;
+        let contador = 1;
+
+        function inicio() {
+            let botao = document.getElementById('btnAdiciona');
+            botao.addEventListener('click', adiciona);
+        }
+
+        function adiciona() {
+            let campoNome = document.getElementById('nome');
+            let nomeAtividade = campoNome.value.trim();
+
+            if (nomeAtividade === "") {
+                alert("Por favor, digite o nome da atividade.");
+                return;
+            }
+
+            let atividadesDiv = document.getElementById('atividades');
+
+            let taskContainer = document.createElement('div');
+            taskContainer.classList.add('task-item');
+
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `c${contador}`;
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    adicionaTarefaConcluida(nomeAtividade);
+                    taskContainer.style.textDecoration = "line-through";
+                } else {
+                    taskContainer.style.textDecoration = "none";
+                }
+            });
+
+            let label = document.createElement('label');
+            label.htmlFor = `c${contador}`;
+            label.textContent = ` ${nomeAtividade}`;
+
+            taskContainer.appendChild(checkbox);
+            taskContainer.appendChild(label);
+            atividadesDiv.appendChild(taskContainer);
+
+            campoNome.value = '';
+            contador++;
+        }
+
+        function adicionaTarefaConcluida(nomeTarefa) {
+            let tabelaConcluidas = document.getElementById('tabelaConcluidasBody');
+            let agora = new Date();
+
+            let dia = String(agora.getDate()).padStart(2, '0');
+            let mes = String(agora.getMonth() + 1).padStart(2, '0');
+            let ano = agora.getFullYear();
+            let horas = String(agora.getHours()).padStart(2, '0');
+            let minutos = String(agora.getMinutes()).padStart(2, '0');
+
+            let dataFormatada = `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+
+            let newRow = tabelaConcluidas.insertRow();
+            let cellNome = newRow.insertCell(0);
+            let cellData = newRow.insertCell(1);
+
+            cellNome.textContent = nomeTarefa;
+            cellData.textContent = dataFormatada;
+        }
+    </script>
+</head>
+<body>
+    <h1>Minhas Tarefas</h1>
+
+    <label for="nome">Atividade:</label>
+    <input type="text" id="nome">
+    <input type="button" id="btnAdiciona" value="Adicionar Tarefa"><br>
+
+    <div id="atividades">
+        <h2>Tarefas Pendentes</h2>
+    </div>
+
+    ---
+
+    <h2>Tarefas Concluídas</h2>
+    <table id="tabelaConcluidas">
+        <thead>
+            <tr>
+                <th>Nome da Tarefa</th>
+                <th>Data de Encerramento</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaConcluidasBody">
+        </tbody>
+    </table>
+
+</body>
+</html>

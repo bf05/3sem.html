@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status-atribuida {
+            background-color: #d4edda;
+        }
+        .status-parada {
+            background-color: #fff3cd;
+        }
+        .status-rejeitada {
+            background-color: #f8d7da;
+        }
+        .task-item {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .task-item label {
+            margin-left: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+    <script>
+        window.onload = inicio;
+        let contador = 1;
+
+        function inicio() {
+            let botao = document.getElementById('btnAdiciona');
+            botao.addEventListener('click', adiciona);
+        }
+
+        function adiciona() {
+            let campoNome = document.getElementById('nome');
+            let nomeAtividade = campoNome.value.trim();
+
+            if (nomeAtividade === "") {
+                alert("Por favor, digite o nome da atividade.");
+                return;
+            }
+
+            let atividadesDiv = document.getElementById('atividades');
+
+            let taskContainer = document.createElement('div');
+            taskContainer.classList.add('task-item');
+            taskContainer.id = `task-${contador}`;
+
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `c${contador}`;
+            checkbox.addEventListener('change', function() {
+                const taskLabel = taskContainer.querySelector('label');
+                if (this.checked) {
+                    adicionaTarefaConcluida(taskLabel.textContent.trim());
+                    taskLabel.style.textDecoration = "line-through";
+                } else {
+                    removerTarefaConcluida(taskLabel.textContent.trim());
+                    taskLabel.style.textDecoration = "none";
+                }
+            });
+
+            let label = document.createElement('label');
+            label.htmlFor = `c${contador}`;
+            label.textContent = `${nomeAtividade}`;
+            label.id = `label-c${contador}`;
+
+            let selectStatus = document.createElement('select');
+            selectStatus.id = `s${contador}`;
+
+            let optionAguardando = document.createElement('option');
+            optionAguardando.value = "inicio";
+            optionAguardando.textContent = "Aguardando";
+            selectStatus.appendChild(optionAguardando);
+
+            let optionAtribuida = document.createElement('option');
+            optionAtribuida.value = "atribuida";
+            optionAtribuida.textContent = "Em andamento";
+            selectStatus.appendChild(optionAtribuida);
+
+            let optionParada = document.createElement('option');
+            optionParada.value = "parada";
+            optionParada.textContent = "Pausada";
+            selectStatus.appendChild(optionParada);
+
+            let optionRejeitada = document.createElement('option');
+            optionRejeitada.value = "rejeitada";
+            optionRejeitada.textContent = "Rejeitada";
+            selectStatus.appendChild(optionRejeitada);
+
+            let optionConcluida = document.createElement('option');
+            optionConcluida.value = "fim";
+            optionConcluida.textContent = "Concluída";
+            selectStatus.appendChild(optionConcluida);
+
+            selectStatus.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const taskLabel = this.previousElementSibling;
+
+                taskLabel.classList.remove('status-atribuida', 'status-parada', 'status-rejeitada');
+
+                if (selectedValue === 'atribuida') {
+                    taskLabel.classList.add('status-atribuida');
+                } else if (selectedValue === 'parada') {
+                    taskLabel.classList.add('status-parada');
+                } else if (selectedValue === 'rejeitada') {
+                    taskLabel.classList.add('status-rejeitada');
+                }
+
+                if (selectedValue === 'fim') {
+                    checkbox.checked = true;
+                    adicionaTarefaConcluida(taskLabel.textContent.trim());
+                    taskLabel.style.textDecoration = "line-through";
+                } else {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        removerTarefaConcluida(taskLabel.textContent.trim());
+                        taskLabel.style.textDecoration = "none";
+                    }
+                }
+            });
+
+            taskContainer.appendChild(checkbox);
+            taskContainer.appendChild(label);
+            taskContainer.appendChild(selectStatus);
+            atividadesDiv.appendChild(taskContainer);
+
+            campoNome.value = '';
+            contador++;
+        }
+
+        function adicionaTarefaConcluida(nomeTarefa) {
+            let tabelaConcluidas = document.getElementById('tabelaConcluidasBody');
+            for (let i = 0; i < tabelaConcluidas.rows.length; i++) {
+                if (tabelaConcluidas.rows[i].cells[0].textContent === nomeTarefa) {
+                    return;
+                }
+            }
+
+            let agora = new Date();
+
+            let dia = String(agora.getDate()).padStart(2, '0');
+            let mes = String(agora.getMonth() + 1).padStart(2, '0');
+            let ano = agora.getFullYear();
+            let horas = String(agora.getHours()).padStart(2, '0');
+            let minutos = String(agora.getMinutes()).padStart(2, '0');
+
+            let dataFormatada = `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+
+            let newRow = tabelaConcluidas.insertRow();
+            let cellNome = newRow.insertCell(0);
+            let cellData = newRow.insertCell(1);
+
+            cellNome.textContent = nomeTarefa;
+            cellData.textContent = dataFormatada;
+        }
+
+        function removerTarefaConcluida(nomeTarefa) {
+            let tabelaConcluidas = document.getElementById('tabelaConcluidasBody');
+            for (let i = 0; i < tabelaConcluidas.rows.length; i++) {
+                if (tabelaConcluidas.rows[i].cells[0].textContent === nomeTarefa) {
+                    tabelaConcluidas.deleteRow(i);
+                    return;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Minhas Tarefas</h1>
+
+    <label for="nome">Atividade:</label>
+    <input type="text" id="nome">
+    <input type="button" id="btnAdiciona" value="Adicionar Tarefa"><br>
+
+    <div id="atividades">
+        <h2>Tarefas Pendentes</h2>
+    </div>
+
+    ---
+
+    <h2>Tarefas Concluídas</h2>
+    <table id="tabelaConcluidas">
+        <thead>
+            <tr>
+                <th>Nome da Tarefa</th>
+                <th>Data de Encerramento</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaConcluidasBody">
+        </tbody>
+    </table>
+
+</body>
+</html>
