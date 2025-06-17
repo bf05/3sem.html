@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cotação do Dólar em Tempo Real</title>
+    </head>
+    <body>
+
+        <h1>Dólar Hoje</h1>
+        
+        <div>Valor de Venda (ASK)</div>
+        
+        <div id="cotacao-dolar">
+            Carregando...
+        </div>
+        
+        <div id="status"></div>
+
+        <script>
+            const cotacaoDiv = document.getElementById('cotacao-dolar');
+            const statusDiv = document.getElementById('status');
+
+            const apiUrl = 'https://economia.awesomeapi.com.br/last/USD-BRL';
+
+            const formatadorMoeda = new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+            async function buscarCotacao() {
+                statusDiv.textContent = 'Atualizando...';
+                statusDiv.style.color = '#007bff';
+
+                try {
+                    const response = await fetch(apiUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erro de rede: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    const valorVenda = data.USDBRL.ask;
+
+                    cotacaoDiv.textContent = formatadorMoeda.format(valorVenda);
+                    
+                    const agora = new Date();
+                    statusDiv.textContent = `Última atualização: ${agora.toLocaleTimeString('pt-BR')}`;
+                    statusDiv.style.color = '#666';
+
+                } catch (error) {
+                    console.error('Falha ao buscar cotação:', error);
+                    cotacaoDiv.textContent = '-';
+                    statusDiv.textContent = 'Erro ao atualizar. Tentando novamente...';
+                    statusDiv.style.color = '#dc3545';
+                }
+            }
+
+            buscarCotacao();
+
+            setInterval(buscarCotacao, 5000);
+        </script>
+
+    </body>
+</html>

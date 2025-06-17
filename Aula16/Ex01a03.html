@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armazenamento Local (Sem Estilo)</title>
+</head>
+<body>
+    <h1>Armazenamento de Dados do Usuário</h1>
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" placeholder="Digite seu nome">
+    <br>
+    <label for="email">E-mail:</label>
+    <input type="email" id="email" placeholder="Digite seu e-mail">
+    <br>
+    <button onclick="salvarDados()">Salvar Dados</button>
+    <button onclick="mostrarDados()">Mostrar Dados Salvos</button>
+    <button onclick="apagarDados()">Apagar Dados Salvos</button>
+
+    <p id="dadosSalvos"></p>
+
+    <script>
+        function salvarDados() {
+            const nomeInput = document.getElementById('nome').value;
+            const emailInput = document.getElementById('email').value;
+
+            if (nomeInput && emailInput) {
+                localStorage.setItem('nomeUsuario', nomeInput);
+                localStorage.setItem('emailUsuario', emailInput);
+                alert('Nome e E-mail salvos com sucesso!');
+                document.getElementById('nome').value = '';
+                document.getElementById('email').value = '';
+            } else {
+                alert('Por favor, preencha o nome e o e-mail.');
+            }
+        }
+
+        function mostrarDados() {
+            const nomeSalvo = localStorage.getItem('nomeUsuario');
+            const emailSalvo = localStorage.getItem('emailUsuario');
+            const dadosSalvosParagrafo = document.getElementById('dadosSalvos');
+
+            if (nomeSalvo && emailSalvo) {
+                dadosSalvosParagrafo.textContent = `Nome: ${nomeSalvo}, E-mail: ${emailSalvo}`;
+            } else {
+                dadosSalvosParagrafo.textContent = 'Nenhum dado salvo encontrado.';
+            }
+        }
+
+        function apagarDados() {
+            localStorage.removeItem('nomeUsuario');
+            localStorage.removeItem('emailUsuario');
+            alert('Nome e E-mail apagados do armazenamento local!');
+            document.getElementById('dadosSalvos').textContent = '';
+        }
+
+        window.onload = function() {
+            mostrarDados();
+        };
+    </script>
+</body>
+</html>

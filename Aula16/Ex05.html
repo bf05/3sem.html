@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercício setTimeout</title>
+    <script>
+        let x = 2;
+        let saida;
+
+        window.onload = inicio;
+
+        function inicio() {
+            saida = document.getElementById('saida');
+            setTimeout(multi, 2000);
+        }
+
+        function multi() {
+          x = x * x;
+          saida.innerHTML = x;
+        }
+    </script>
+</head>
+<body>
+
+    <h1>O valor aparecerá abaixo após 2 segundos:</h1>
+    <div id="saida"></div>
+
+</body>
+</html>

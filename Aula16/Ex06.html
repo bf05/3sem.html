@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercício setInterval</title>
+    <script>
+        let x = 1;
+        let saida;
+
+        window.onload = inicio;
+
+        function inicio() {
+            saida = document.getElementById('saida');
+            
+            saida.innerHTML = x; 
+            setInterval(soma, 2000);
+        }
+
+        function soma() {
+          x = x + x; 
+          saida.innerHTML = x;
+        }
+    </script>
+</head>
+<body>
+
+    <h1>O valor abaixo irá dobrar a cada 2 segundos:</h1>
+    <div id="saida" style="font-size: 24px; font-weight: bold;"></div>
+
+</body>
+</html>

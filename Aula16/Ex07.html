@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotação do Dólar</title>
+</head>
+<body>
+
+    <h1>Cotação do Dólar PTAX</h1>
+    
+    <label for="dataCotacao">Selecione uma data:</label>
+    <input type="date" id="dataCotacao">
+    
+    <hr>
+    
+    <div id="resultado">
+        <p>A cotação do dia selecionado aparecerá aqui.</p>
+    </div>
+
+    <script>
+        const inputData = document.getElementById('dataCotacao');
+        const divResultado = document.getElementById('resultado');
+
+        inputData.addEventListener('change', buscarCotacao);
+
+        async function buscarCotacao() {
+            const dataSelecionada = inputData.value;
+
+            if (!dataSelecionada) {
+                return;
+            }
+
+            divResultado.innerHTML = '<p>Buscando cotação...</p>';
+
+            const [ano, mes, dia] = dataSelecionada.split('-');
+            const dataFormatada = `${mes}-${dia}-${ano}`;
+
+            const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${dataFormatada}'&$top=100&$format=json`;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Erro na rede: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.value && data.value.length > 0) {
+                    const cotacaoInfo = data.value[0];
+                    const compra = cotacaoInfo.cotacaoCompra;
+                    const venda = cotacaoInfo.cotacaoVenda;
+                    const dataHora = new Date(cotacaoInfo.dataHoraCotacao).toLocaleString('pt-BR');
+                    
+                    const formatadorMoeda = new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    });
+
+                    divResultado.innerHTML = `
+                        <p>
+                            <b>Preço de Compra:</b> ${formatadorMoeda.format(compra)}
+                        </p>
+                        <p>
+                            <b>Preço de Venda:</b> ${formatadorMoeda.format(venda)}
+                        </p>
+                        <p>
+                            <b>Data e Hora:</b> ${dataHora}
+                        </p>
+                    `;
+                } else {
+                    divResultado.innerHTML = '<p style="color: red;">Não há dados de cotação para a data selecionada. (Pode ser um fim de semana ou feriado).</p>';
+                }
+
+            } catch (error) {
+                console.error("Erro ao buscar cotação:", error);
+                divResultado.innerHTML = '<p style="color: red;">Ocorreu um erro ao buscar as informações. Tente novamente.</p>';
+            }
+        }
+    </script>
+
+</body>
+</html>
